@@ -1,0 +1,4 @@
+env/
+.env
+__pycache__
+stock_info.json
