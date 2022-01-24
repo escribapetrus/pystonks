@@ -1,5 +1,8 @@
+from flask import request
+from functools import wraps
 import jwt
 import json
+
 
 def authenticated(f):
     @wraps(f)
@@ -12,7 +15,7 @@ def authenticated(f):
             return json.dumps({"message": "a valid token is missing"})
 
         try:
-            data = jwt.decode(token, app.config["SECRET_KEY"], algorithms="HS256")
+            # data = jwt.decode(token, app.config["SECRET_KEY"], algorithms="HS256")
             current_user = 1
         except:
             return json.dumps({"message": "token is invalid"})
