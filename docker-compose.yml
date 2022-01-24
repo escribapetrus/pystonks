@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    env_file:
+      - .env
+    command: python app.py
+    volumes:
+      - .:/code
+    ports:
+      - "5001:5000"
