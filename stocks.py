@@ -1,5 +1,8 @@
 from file_client import get_contents
+from http_client import make_request
+from flask import jsonify
 from utils import update_dict
+import os
 
 def filters(x): 
     fil = [
@@ -35,4 +38,21 @@ def rank_greenblatt(stock_list):
     return sorted(updated, key=crit, reverse=True)
 
 def rank(stock_list):
-    return rank_greenblatt(rank_earning_yield(rank_roic(apply_filters(stock_list))))
+    return rank_greenblatt(rank_earning_yield(rank_roic(reducer(apply_filters(stock_list),{}))))
+        
+def reducer(stock_list, acc):
+    new_acc = acc.copy()
+
+    if stock_list == []: 
+        return list(acc.values())
+    else: 
+        stock_in_acc = acc.get(stock_list[0]["companyName"])
+        if stock_in_acc:
+            if stock_in_acc["liquidezMediaDiaria"] < stock_list[0]["liquidezMediaDiaria"]:
+                new_acc[stock_list[0]["companyName"]] = stock_list[0]
+                return reducer(stock_list[1:], new_acc) 
+            else:
+                return reducer(stock_list[1:], new_acc) 
+        else: 
+            new_acc[stock_list[0]["companyName"]] = stock_list[0]
+            return reducer(stock_list[1:], new_acc) 
