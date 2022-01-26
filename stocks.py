@@ -36,13 +36,9 @@ def rank_greenblatt(stock_list):
     crit = lambda x: x.get("rank_GREENBLATT")
     updated = [update_dict(stock, "rank_GREENBLATT", stock.get("rank_EY") + stock.get("rank_ROIC")) for stock in stock_list]
     return sorted(updated, key=crit, reverse=True)
-
-def rank(stock_list):
-    return rank_greenblatt(rank_earning_yield(rank_roic(reducer(apply_filters(stock_list),{}))))
         
 def reducer(stock_list, acc):
     new_acc = acc.copy()
-
     if stock_list == []: 
         return list(acc.values())
     else: 
@@ -50,9 +46,16 @@ def reducer(stock_list, acc):
         if stock_in_acc:
             if stock_in_acc["liquidezMediaDiaria"] < stock_list[0]["liquidezMediaDiaria"]:
                 new_acc[stock_list[0]["companyName"]] = stock_list[0]
+                new_acc[stock_list[0]["companyName"]] = stock_list[0]
                 return reducer(stock_list[1:], new_acc) 
             else:
                 return reducer(stock_list[1:], new_acc) 
         else: 
             new_acc[stock_list[0]["companyName"]] = stock_list[0]
             return reducer(stock_list[1:], new_acc) 
+
+def rank(stock_list):
+     return rank_greenblatt(rank_earning_yield(rank_roic(reducer(apply_filters(stock_list),{}))))
+    
+def simplify(stock_list):
+    return [{"rank": index, "ticker": item["ticker"]} for index, item in enumerate(stock_list)]

@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, url_for, redirect
-from markupsafe import escape
-from stocks import rank
+from stocks import rank, simplify
 from http_client import make_request
-from file_client import get_contents
 import os
 
 app = Flask(__name__)
@@ -13,10 +11,15 @@ def hello_world():
 
 @app.route("/my-stocks")
 def my_stocks():
-    # url = os.environ["STOCK_INFO_SOURCE_URL"]
-    # stock_list = make_request(url)
-    stock_list = get_contents("stock_info.json")
+    url = os.environ["STOCK_INFO_SOURCE_URL"]
+    stock_list = make_request(url)
     return jsonify(rank(stock_list))
+
+@app.route("/my-stocks/simple")
+def my_stocks_simple():
+    url = os.environ["STOCK_INFO_SOURCE_URL"]
+    stock_list = make_request(url)
+    return jsonify(simplify(rank(stock_list)))
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
